@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {fetchPosts} from '../actions/App';
+import {postsFetchData} from '../actions/App';
 import {connect} from 'react-redux';
 
 class App extends Component {
@@ -16,12 +16,20 @@ class App extends Component {
 		)
 	} 
 }
-
-function mapDispatchToProps(dispatch) {
+function mapStateToProps({posts, comments}) {
 	return {
-		fetchPosts: (data) =>  dispatch(fetchPosts()),
+		posts: posts,
+		comments: comments
 	}
 
 }
 
-export default connect(mapDispatchToProps)(App);
+function mapDispatchToProps(dispatch) {
+	return {
+		fetchPosts: (url) =>  dispatch(postsFetchData(url)),
+	}
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
+
