@@ -20,6 +20,8 @@ const initialState = {
     },
     comments : {
         byId : {
+            
+        },/*FORMAT
             "comment1" : {
                 id : "comment1",
                 author : "user2",
@@ -29,34 +31,15 @@ const initialState = {
                 id : "comment2",
                 author : "user3",
                 comment : ".....",
-            },
-            "comment3" : {
-                id : "comment3",
-                author : "user3",
-                comment : ".....",
-            },
-            "comment4" : {
-                id : "comment4",
-                author : "user1",
-                comment : ".....",
-            },
-            "comment5" : {
-                id : "comment5",
-                author : "user3",
-                comment : ".....",
-            },
-        },
-        allIds : ["comment1", "comment2", "comment3", "commment4", "comment5"]
+            }*/
+        allIds : []
     }
 };
 
 function postsLoadingStatus(state = false, action) {
 	
 	switch (action.type) {
-        case POSTS_HAS_ERRORED:
-            return action.hasErrored;
         case POSTS_IS_LOADING:
-        	console.log("item loading");
             return action.isLoading;
         default:
             return state;
@@ -64,11 +47,20 @@ function postsLoadingStatus(state = false, action) {
 
 }
 
-function posts(state=initialState, action) {
+function postsErrorStatus(state = false, action) {
+    switch (action.type) {
+        case POSTS_HAS_ERRORED:
+            return action.hasErrored;
+        default:
+            return state;
+    }
+}
+
+function postsAndComments(state=initialState, action) {
 	const {posts} = action;
 	switch (action.type) {
         case POSTS_FETCH_DATA_SUCCESS:
-             state = (posts).map(function(post){
+             (posts).map(function(post){
             	state.posts.byId[post.id] = {
             		id: post.id,
             		body: post.body
@@ -76,7 +68,7 @@ function posts(state=initialState, action) {
             	state.posts.allIds.push(post.id);
             	return state;	
             });
-            return state.posts
+            return state
      
         default:
             return state;
@@ -85,5 +77,6 @@ function posts(state=initialState, action) {
 
 export default combineReducers({
 	postsLoadingStatus,
-	posts
+    postsErrorStatus,
+	postsAndComments
 });

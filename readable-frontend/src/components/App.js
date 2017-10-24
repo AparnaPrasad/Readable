@@ -1,25 +1,26 @@
 import React, { Component } from 'react';
 import {postsFetchData} from '../actions/App';
 import {connect} from 'react-redux';
-
+import PostsDisplay from './PostsDisplay'
 class App extends Component {
 
 	componentDidMount(){
 		console.log("in component mount");
 		const {fetchPosts} = this.props;
 		fetchPosts();
+
 	}
 
 	render(){
 		return(
-			<div>hello world</div>
+			<PostsDisplay postsAndComments={this.props.postsAndComments}/>
 		)
 	} 
 }
-function mapStateToProps({posts, comments}) {
+function mapStateToProps({postsAndComments}) {
 	return {
-		posts: posts,
-		comments: comments
+		postsAndComments: postsAndComments,
+		//comments: comments
 	}
 
 }
