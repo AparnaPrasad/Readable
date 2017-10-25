@@ -1,25 +1,35 @@
 import React, { Component } from 'react';
-import {postsFetchData} from '../actions/App';
+import {fetchPosts /*, upvote_downvote*/} from '../actions/App';
 import {connect} from 'react-redux';
-import PostsDisplay from './PostsDisplay'
+import PostsDisplay from './PostsDisplay';
+
 class App extends Component {
 
-	componentDidMount(){
-		console.log("in component mount");
-		const {fetchPosts} = this.props;
-		fetchPosts();
+	constructor(props){
+		super(props)
+		this.loadPosts();
 
 	}
 
+	 loadPosts(){
+		fetch("http://localhost:3001/posts/", {method: "GET", headers: {'Authorization':'apbsAuth'}})
+	    .then((resp) => {
+	    	resp.json().then((data) => {
+		        this.props.load_posts(data);
+	      })
+	    })
+	}
+
 	render(){
+		console.log("in app js", this.props.posts)
 		return(
-			<PostsDisplay postsAndComments={this.props.postsAndComments}/>
+			<PostsDisplay posts={this.props.posts} /*upvote_downvote={this.props.upvote_downvote}*/ />
 		)
 	} 
 }
-function mapStateToProps({postsAndComments}) {
+function mapStateToProps({posts}) {
 	return {
-		postsAndComments: postsAndComments,
+		posts: posts,
 		//comments: comments
 	}
 
@@ -27,7 +37,8 @@ function mapStateToProps({postsAndComments}) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		fetchPosts: (url) =>  dispatch(postsFetchData(url)),
+		load_posts: (obj) =>  dispatch(fetchPosts(obj)),
+		//upvote_downvote: (votes, postId) => dispatch(upvote_downvote(votes, postId))
 	}
 
 }
