@@ -1,56 +1,137 @@
 import React, { Component } from 'react';
-import {upvote_downvote} from '../actions/App';
 import {connect} from 'react-redux';
-
+import Modal from 'react-modal';
+import {upvote_downvote, fetchComments} from '../actions/App';
+import PostDetails from './PostDetails';
+import AddComments from './AddComments';
+import DeleteItem from './DeleteItem';
+import AddPost from './AddPost';
 class PostsDisplay extends Component {
+	state = {
+		isPostViewOpen: false,
+		isPostViewEditable: false,
+		isAddCommentsViewOpen: false,
+		isAddPostViewOpen:false,
+		postId:''
+
+	}
+	openPostsViewModal(postId, isEditable) { 
+		this.setState(() => ({ isPostViewOpen: true,
+			isPostViewEditable: isEditable		
+		 }))
+
+		fetch("http://localhost:3001/posts/"+postId+"/comments", {method: "GET", headers: {'Authorization':'apbsAuth'}})
+	    .then((resp) => {
+	    	resp.json().then((data) => {
+	    		this.props.fetchComments(postId, data);
+	      })
+	    })
+	}	
+    closePostsViewModal() {
+    	this.setState(() => ({ isPostViewOpen: false }))
+	}
 	upvoteOrDownvote(votes, postId, type){
-		console.log('in upvote', votes, postId);
 		fetch("http://localhost:3001/posts/"+ postId, {method: "POST",
 		  body:JSON.stringify({option: type}), headers: {'Content-Type': 'application/json','Authorization':'apbsAuth'}})
 	    .then((resp) => {
 	    	resp.json().then((data) => {
-	    		console.log("upvote resp:", data.voteScore, postId);
 		        this.props.upvote_downvote(data.voteScore, postId);
 	      })
 	    })
 
 	}
+	closeAddCommentsViewModal() {
+    	this.setState(() => ({ isAddCommentsViewOpen: false }))
+	}
+	closeAddPostViewModal() {
+    	this.setState(() => ({ isAddPostViewOpen: false }))
+	}
+	openAddPostViewModel() {
+		this.setState(() => ({ isAddPostViewOpen: true,	
+		 }))
+	}
+	openAddCommentsViewModel(postId) {
+		this.setState(() => ({ isAddCommentsViewOpen: true,	
+		postId: postId	
+		 }))
+	}
 
 	render(){
-	console.log('props post', this.props.posts);
-	const {posts} = this.props;
-	return(<ul>
-		{posts && posts.postId && posts.postId.map((p, i) =>
-			<li key={i}>
-				<div>{posts.postById[p].title}
-				<button>Edit Post</button>
-				<button>View Post</button>
-				</div>
-				<div>{posts.postById[p].body}</div>
-				<div>Votes: {posts.postById[p].voteScore}</div>
-				<div>Comments: {posts.postById[p].commentCount}</div>
-				<button onClick={(votes, id)=>this.upvoteOrDownvote(posts.postById[p].voteScore, p, 'upVote')}>Upvote</button>
-				<button onClick={(votes, id)=>this.upvoteOrDownvote(posts.postById[p].voteScore, p, 'downVote')}>Downvote</button>
-				<button>Add Comment</button>
-			</li>
-		)}
-		</ul>)
-}
+	const {posts, comments} = this.props;
+	const {isPostViewOpen, isPostViewEditable, isAddCommentsViewOpen, isAddPostViewOpen} = this.state;
+		console.log("at posts dislay!!!#@@#$#@", posts);
+	return(
+		<div>
+			<button onClick={()=>this.openAddPostViewModel()}>Add Post</button>
+			<ul>
+				{posts && posts.postId && !posts.postId.deleted && posts.postId.map((p, i) =>
+				{	
+
+					if(!posts.postById[p].deleted) 
+					{	return  <li key={i}>
+							<div>{posts.postById[p].title}
+							<button onClick={()=> this.openPostsViewModal(p, true)}>Edit Post</button>
+							<button onClick={()=> this.openPostsViewModal(p, false)}>View Post</button>
+							</div>
+							<div>{posts.postById[p].body}</div>
+							<div>Votes: {posts.postById[p].voteScore}</div>
+							<div>Comments: {posts.postById[p].commentCount}</div>
+							<button onClick={()=>this.upvoteOrDownvote(posts.postById[p].voteScore, p, 'upVote')}>Upvote</button>
+							<button onClick={()=>this.upvoteOrDownvote(posts.postById[p].voteScore, p, 'downVote')}>Downvote</button>
+							<DeleteItem item='post' itemId={p}/>
+							<button onClick={()=>this.openAddCommentsViewModel(p)}>Add Comment</button>
+						</li>
+					}
+					else 
+						return ''
+				}
+					
+				)}
+			</ul>
+			<Modal
+		        className='modal'
+		        overlayClassName='modalSizeBig overlay'
+		        isOpen={isPostViewOpen}
+		        onRequestClose={()=>this.closePostsViewModal()}
+		        contentLabel='Modal'>
+          		{isPostViewOpen &&  <PostDetails posts={posts} comments={comments} closePostsViewModal={this.closePostsViewModal.bind(this)} isPostViewEditable={isPostViewEditable} />}
+        		<button onClick={()=>this.closePostsViewModal()}>Close</button>
+        	</Modal>
+        	<Modal
+		        className='modal'
+		        overlayClassName='overlay modalSizeBig'
+		        isOpen={isAddCommentsViewOpen}
+		        onRequestClose={()=>this.closeAddCommentsViewModal()}
+		        contentLabel='Modal'>
+          		{isAddCommentsViewOpen &&  <AddComments parentPostId={this.state.postId} closeAddCommentsViewModal={this.closeAddCommentsViewModal.bind(this)} />}
+        		<button onClick={()=>this.closeAddCommentsViewModal()}>Close</button>
+        	</Modal>
+        	<Modal
+		        className='modal'
+		        overlayClassName='overlay modalSize big'
+		        isOpen={isAddPostViewOpen}
+		        onRequestClose={()=>this.closeAddPostViewModal()}
+		        contentLabel='Modal'>
+		        {isAddPostViewOpen &&  <AddPost  closeAddPostViewModal={this.closeAddPostViewModal.bind(this)} />}
+        		<button onClick={()=>this.closeAddPostViewModal()}>Close</button>
+        	</Modal>
+		</div>)
+} 
 }
 
-function mapStateToProps({posts}) {
-	console.log('mapStateToProps:', posts);
+function mapStateToProps({posts, comments}) {
 	return {
 		posts: posts,
-		//comments: comments
+		comments: comments
 	}
 
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		//load_posts: (obj) =>  dispatch(fetchPosts(obj)),
-		upvote_downvote: (votes, postId) => dispatch(upvote_downvote(votes, postId))
+		upvote_downvote: (votes, postId) => dispatch(upvote_downvote(votes, postId)),
+		fetchComments: (postId, commentsList) => dispatch(fetchComments(postId, commentsList))
+	
 	}
 
 }

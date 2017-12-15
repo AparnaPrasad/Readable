@@ -5,6 +5,7 @@ import {createStore, applyMiddleware} from 'redux';
 import rootReducer from './reducers/App';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
+import './style/style.css';
 /*const logger = store => next => action => {
   console.group(action.type)
   console.info('dispatching', action)
