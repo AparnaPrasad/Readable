@@ -6,6 +6,8 @@ import PostDetails from './PostDetails';
 import AddComments from './AddComments';
 import DeleteItem from './DeleteItem';
 import AddPost from './AddPost';
+import {Route, BrowserRouter,Link} from 'react-router-dom';
+
 class PostsDisplay extends Component {
 	state = {
 		isPostViewOpen: false,
@@ -17,7 +19,8 @@ class PostsDisplay extends Component {
 	}
 	openPostsViewModal(postId, isEditable) { 
 		this.setState(() => ({ isPostViewOpen: true,
-			isPostViewEditable: isEditable		
+			isPostViewEditable: isEditable,
+			postId:postId		
 		 }))
 
 		fetch("http://localhost:3001/posts/"+postId+"/comments", {method: "GET", headers: {'Authorization':'apbsAuth'}})
@@ -57,11 +60,17 @@ class PostsDisplay extends Component {
 	}
 
 	render(){
-	const {posts, comments} = this.props;
-	const {isPostViewOpen, isPostViewEditable, isAddCommentsViewOpen, isAddPostViewOpen} = this.state;
-		console.log("at posts dislay!!!#@@#$#@", posts);
+	const {posts, comments, categorySelected} = this.props;
+	const {isPostViewEditable, isAddCommentsViewOpen, isAddPostViewOpen,
+	postId} = this.state;
+		console.log("at posts dislay!!!#@@#$#@", categorySelected,postId);
 	return(
+		<BrowserRouter>
 		<div>
+		<Route exact path={"/"+categorySelected} render={()=>
+
+			(<div>
+
 			<button onClick={()=>this.openAddPostViewModel()}>Add Post</button>
 			<ul>
 				{posts && posts.postId && !posts.postId.deleted && posts.postId.map((p, i) =>
@@ -71,9 +80,13 @@ class PostsDisplay extends Component {
 					{	return  <li key={i}>
 							<div>{posts.postById[p].title}
 							<button onClick={()=> this.openPostsViewModal(p, true)}>Edit Post</button>
-							<button onClick={()=> this.openPostsViewModal(p, false)}>View Post</button>
+							<span onClick={()=> this.openPostsViewModal(p, false)}>
+								{categorySelected?<Link to={"/"+categorySelected+"/"+p} className="close-search">View Post</Link>:
+								<Link to={"/"+p}>View Post</Link>}
+							</span>
 							</div>
 							<div>{posts.postById[p].body}</div>
+							<div><b>{posts.postById[p].category}</b></div>
 							<div>Votes: {posts.postById[p].voteScore}</div>
 							<div>Comments: {posts.postById[p].commentCount}</div>
 							<button onClick={()=>this.upvoteOrDownvote(posts.postById[p].voteScore, p, 'upVote')}>Upvote</button>
@@ -88,15 +101,7 @@ class PostsDisplay extends Component {
 					
 				)}
 			</ul>
-			<Modal
-		        className='modal'
-		        overlayClassName='modalSizeBig overlay'
-		        isOpen={isPostViewOpen}
-		        onRequestClose={()=>this.closePostsViewModal()}
-		        contentLabel='Modal'>
-          		{isPostViewOpen &&  <PostDetails posts={posts} comments={comments} closePostsViewModal={this.closePostsViewModal.bind(this)} isPostViewEditable={isPostViewEditable} />}
-        		<button onClick={()=>this.closePostsViewModal()}>Close</button>
-        	</Modal>
+						
         	<Modal
 		        className='modal'
 		        overlayClassName='overlay modalSizeBig'
@@ -115,7 +120,22 @@ class PostsDisplay extends Component {
 		        {isAddPostViewOpen &&  <AddPost  closeAddPostViewModal={this.closeAddPostViewModal.bind(this)} />}
         		<button onClick={()=>this.closeAddPostViewModal()}>Close</button>
         	</Modal>
-		</div>)
+        	</div>)}/>
+
+        	{postId && categorySelected && <Route exact path={"/"+categorySelected+"/"+postId} render={()=>
+					(<PostDetails posts={posts} 
+						comments={comments} 
+						isPostViewEditable={isPostViewEditable} />)}/>
+			}
+			{postId && !categorySelected && <Route exact path={"/"+postId} render={()=>
+					(<PostDetails posts={posts} 
+						comments={comments} 
+						isPostViewEditable={isPostViewEditable} />)}/>
+			}
+
+		</div>
+
+			</BrowserRouter>)
 } 
 }
 

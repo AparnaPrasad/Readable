@@ -12,6 +12,7 @@ class AddPost extends Component {
 		const titleInput = this.titleInput.value;
 		const authorInput = this.authorInput.value;
 		const bodyInput = this.bodyInput.value;
+		const categoryInput = this.categoryInput.value;
 
 		const time = new Date();
 		const l_warning = !titleInput || !authorInput || !bodyInput ? 
@@ -27,7 +28,8 @@ class AddPost extends Component {
 		  	timestamp:time,
 		  	body:bodyInput,
 		  	author:authorInput,
-		  	title: titleInput
+		  	title: titleInput,
+		  	category: categoryInput
 		  };
 
 		fetch("http://localhost:3001/posts", {method: "POST",
@@ -45,7 +47,7 @@ class AddPost extends Component {
 	    })
 	}
 	render(){
-		const {closeAddPostViewModal, posts} = this.props;
+		const {closeAddPostViewModal, categories} = this.props;
 		console.log('posts', this.props.posts);
 		return(<div>
 				Add Post
@@ -69,7 +71,7 @@ class AddPost extends Component {
 				</div>
 				<div>
 					<select ref={(input)=> this.categoryInput = input}>
-					{posts && posts.categories && posts.categories.map(function(c,i){
+					{categories && categories.map(function(c,i){
 						return <option key={i} value={c.path}>{c.name}</option>
 					})
 					}
@@ -81,10 +83,11 @@ class AddPost extends Component {
 			</div>)
 	}
 }
-function mapStateToProps({posts, comments}) {
+function mapStateToProps({posts, comments, categories}) {
 	return {
-		posts: posts,
-		comments: comments
+		//posts: posts,
+		comments: comments,
+		categories: categories
 	}
 
 }

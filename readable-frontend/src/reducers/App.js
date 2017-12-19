@@ -6,7 +6,7 @@ import { combineReducers } from 'redux';
 
 function posts(state={}, action) {
     const {posts, votes, postId, newPost, parentId,
-     commentCount, categories} = action;
+     commentCount} = action;
 	switch (action.type) {
         case FETCH_POSTS:
             const postDetails = {};
@@ -60,10 +60,6 @@ function posts(state={}, action) {
                 
         }
 
-        case LOAD_CATEGORIES:
-            return{
-                ...state, categories: categories.categories
-            };
         case ADD_POST:
            return{
                 ...state, 
@@ -147,7 +143,19 @@ function comments(state={}, action) {
     }
 }
 
+function categories(state={}, action){
+    const {categories} = action;
+    console.log("from reducer:", categories);
+    switch(action.type) {
+        case LOAD_CATEGORIES:
+            return categories.categories;
+        default:
+            return state;
+        }
+}
+
 export default combineReducers({
 	posts,
-    comments
+    comments,
+    categories
 });

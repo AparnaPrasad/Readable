@@ -26,3 +26,9 @@
     
 }
 
+.linkClass {
+  width: inherit;
+  height: inherit;
+  display:  block;;
+}
+
