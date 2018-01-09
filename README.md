@@ -2,7 +2,11 @@
 Post and Comments project (Still in progress)
 Project 2: Readable (Udacity Nano Degree)
 
+React Nanodegree Program
+
 This project is done as part of Udacity nano degree program. To illustrate the understanding of React and Redux. 
+
+![react redux](https://user-images.githubusercontent.com/1925970/34735371-3ac0e5be-f595-11e7-8106-6937cc81748c.png)
 
 This is a content and comment structure, where users will be able build a content and comment. 
 Users will be able to post content to predefined categories, comment on their posts and other users' posts,
