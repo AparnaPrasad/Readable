@@ -2,7 +2,7 @@
 Post and Comments project (Still in progress)
 Project 2: Readable (Udacity Nano Degree)
 
-React Nanodegree Program
+# React Nanodegree Program
 
 This project is done as part of Udacity nano degree program. To illustrate the understanding of React and Redux. 
 
