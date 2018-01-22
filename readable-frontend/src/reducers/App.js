@@ -145,7 +145,7 @@ function comments(state={}, action) {
 
 function categories(state={}, action){
     const {categories} = action;
-    console.log("from reducer:", categories);
+    //console.log("from reducer:", categories);
     switch(action.type) {
         case LOAD_CATEGORIES:
             return categories.categories;

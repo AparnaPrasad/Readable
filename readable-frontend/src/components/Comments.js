@@ -18,7 +18,7 @@ class Comments extends Component {
 
 	render() {
 		const {comments} = this.props;
-		console.log("At comments display#$#%#$", comments);
+		//console.log("At comments display#$#%#$", comments);
 		return(
 			<div>
 				COMMENTS:

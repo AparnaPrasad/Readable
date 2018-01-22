@@ -9,6 +9,16 @@ class PostDetails extends Component {
 	state = {
 		isAddCommentsViewOpen: false,
 	}
+	componentDidMount(){
+		console.log('ctor of post details');
+	}
+	componentWillUnmount(){
+		console.log('closing post details');
+		const {viewPost} = this.props;
+		if(viewPost) {
+			viewPost(false);
+		}
+	}
 	handleChange = (name, value)=>{
 		this.setState({
 			name: value,
@@ -46,13 +56,13 @@ class PostDetails extends Component {
 	/*PUT /posts/:id*/
 
 	render(){
-		const {posts, comments, isPostViewEditable, closePostsViewModal} = this.props;
+		const {posts, comments, isPostViewEditable, closePostsViewModal, postId} = this.props;
 		const {isAddCommentsViewOpen} = this.state;
 		
 		return(
 			<div>
 				<div>POST DETAILS</div>
-					{comments && comments.postId && !posts.postById[comments.postId].deleted &&
+					{postId && !posts.postById[postId].deleted &&
 						<div>
 						<ul>
 							<li>
@@ -60,7 +70,7 @@ class PostDetails extends Component {
 								{isPostViewEditable?
 									<input placeholder="New Title" type="text" ref={(input) => this.titleInput = input}
 									/>:
-								<span>{posts.postById[comments.postId].title}</span>}
+								<span>{posts.postById[postId].title}</span>}
 							</li>
 							<li>
 							BODY:
@@ -70,13 +80,13 @@ class PostDetails extends Component {
 								type="text" 
 								ref={(input) => this.bodyInput = input}
 								/>:
-								<span>{posts.postById[comments.postId].body}</span>}
+								<span>{posts.postById[postId].body}</span>}
 							</li>
 							<li>
-								AUTHOR: {posts.postById[comments.postId].author}
+								AUTHOR: {posts.postById[postId].author}
 							</li>
 							<li>
-								VOTES: {posts.postById[comments.postId].voteScore}
+								VOTES: {posts.postById[postId].voteScore}
 							</li>
 							{comments.commentsIds && comments.commentsIds.length>0 &&
 								<li> 
@@ -102,7 +112,7 @@ class PostDetails extends Component {
 		}
 	}
 
-function mapStateToProps({posts,comments}) {
+function mapStateToProps({posts}) {
 	return {
 		posts: posts,
 	}

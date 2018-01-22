@@ -65,7 +65,7 @@ class AddComments extends Component {
 				</div>
 				<div>
 				<button onClick={()=>this.postComment()}>Post Comment</button>
-				<button onClick={()=>closeAddCommentsViewModal()}>Cancel</button>
+				<button onClick={()=>closeAddCommentsViewModal()}>Close</button>
 				</div>
 			</div>)
 	}

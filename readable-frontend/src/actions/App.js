@@ -62,6 +62,7 @@ export function addComments(parentId, commentCount, commentDetails) {
 }
 
 export function loadCategories(categories) {
+    console.log(' in load categories action');
     return {
         type: LOAD_CATEGORIES,
         categories
